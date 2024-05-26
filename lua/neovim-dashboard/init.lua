@@ -27,7 +27,7 @@ local default_opts = {
 		{
 			key = "d",
 			func = function()
-				vim.cmd("q")
+        require('neovim-dashboard'):close()
 			end,
 			icon = "",
 			description = ":q",
@@ -80,6 +80,7 @@ function M:init()
 		["wrap"] = false,
 		["signcolumn"] = "no",
 		["winbar"] = "",
+		["stc"] = "",
 	}
 	for opt, val in pairs(opts) do
 		vim.opt_local[opt] = val
@@ -228,6 +229,16 @@ function M:render()
 	end
 
 	vim.bo[self.bufnr].modifiable = false
+end
+
+function M:close()
+	if self.bufnr and vim.api.nvim_buf_is_loaded(self.bufnr) then
+		vim.api.nvim_buf_delete(self.bufnr, { force = true })
+	end
+
+	if self.winid and vim.api.nvim_win_is_valid(self.winid) then
+		vim.api.nvim_win_close(self.winid, true)
+	end
 end
 
 return M
