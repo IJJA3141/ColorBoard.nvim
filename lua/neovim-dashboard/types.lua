@@ -1,10 +1,8 @@
---- @class array<T>: { [integer]: T}
-
 --- @class dashboard
 --- @field width number
 --- @field height number
 --- @field colors boolean
---- @field ascii string
+--- @field ascii string[]
 
 --- @class keybind
 --- @field icon string
@@ -13,5 +11,5 @@
 --- @field func function
 
 --- @class config
---- @field keybinds array<keybind>
---- @field dashboards array<dashboard>
+--- @field keybinds keybind[]
+--- @field dashboards dashboard[]
