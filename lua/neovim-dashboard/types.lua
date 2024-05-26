@@ -8,8 +8,12 @@
 --- @field icon string
 --- @field key string
 --- @field description string
---- @field func function
+--- @field func string | function
 
 --- @class config
+--- @field top_margin number
+--- @field center_margin number
+--- @field bottom_margin number
 --- @field keybinds keybind[]
+--- @field keybind_width number
 --- @field dashboards dashboard[]

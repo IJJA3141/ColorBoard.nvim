@@ -2,13 +2,37 @@
 local utils = {}
 function utils.buf_is_empty(bufnr)
 	bufnr = bufnr or 0
-	return vim.api.nvim_buf_line_count(0) == 1 and vim.api.nvim_buf_get_lines(0, 0, -1, false)[1] == ""
+	return vim.api.nvim_buf_line_count(bufnr) == 1 and vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)[1] == ""
 end
 
-local M = {}
+function utils.disable_move_key(bufnr)
+	local keys = { "w", "f", "b", "h", "j", "k", "l", "<Up>", "<Down>", "<Left>", "<Right>" }
+	vim.tbl_map(function(k)
+		vim.keymap.set("n", k, "<Nop>", { buffer = bufnr })
+	end, keys)
+end
+
+local M = {
+	---@type string[]
+	keybinds = {},
+}
+
 ---@type  config
 local default_opts = {
-	keybinds = {},
+	top_margin = 2,
+	center_margin = 2,
+	bottom_margin = 2,
+	keybind_width = 30,
+	keybinds = {
+		{
+			key = "d",
+			func = function()
+				vim.cmd("q")
+			end,
+			icon = "",
+			description = ":q",
+		},
+	},
 	dashboards = { {
 		width = 20,
 		height = 1,
@@ -61,6 +85,14 @@ function M:init()
 		vim.opt_local[opt] = val
 	end
 
+	--[[
+	vim.api.nvim_create_autocmd("WinResized", {
+		callback = function()
+			require("test.init"):render()
+		end,
+	})
+  --]]
+
 	vim.api.nvim_create_autocmd("VimResized", {
 		callback = function()
 			require("test.init"):render()
@@ -79,6 +111,26 @@ function M:init()
 		end,
 		desc = "[Dashboard] clean dashboard data reduce memory",
 	})
+
+	-- keybinds
+	utils.disable_move_key(self.bufnr)
+	for i = 1, #self.opts.keybinds do
+		vim.keymap.set(
+			"n",
+			self.opts.keybinds[i].key,
+			self.opts.keybinds[i].func,
+			{ desc = self.opts.keybinds[i].description, buffer = self.bufnr }
+		)
+
+		local line = ""
+		line = line .. self.opts.keybinds[i].icon .. " " .. self.opts.keybinds[i].description
+		for j = 1, self.opts.keybind_width - #self.opts.keybinds[i].description do
+			line = line .. " "
+		end
+		line = line .. "[" .. self.opts.keybinds[i].key .. "]"
+
+		table.insert(self.keybinds, line)
+	end
 
 	self:get_valid()
 end
@@ -127,23 +179,54 @@ function M:render()
 	end
 
 	---@type string[]
-	local centered = {}
+	local centered_dashboard = {}
 	local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.idx].width) / 2
 
 	for j = 1, self.opts.dashboards[self.idx].height do
-		centered[j] = ""
+		centered_dashboard[j] = ""
 		for i = 1, horizontal_margin do
-			centered[j] = centered[j] .. " "
+			centered_dashboard[j] = centered_dashboard[j] .. " "
 		end
-		centered[j] = centered[j] .. self.opts.dashboards[self.idx].ascii[j]
+		centered_dashboard[j] = centered_dashboard[j] .. self.opts.dashboards[self.idx].ascii[j]
+	end
+
+	local centered_keybinds = {}
+	horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.keybind_width) / 2
+
+	for j = 1, #self.keybinds do
+		centered_keybinds[j] = ""
+		for i = 1, horizontal_margin do
+			centered_keybinds[j] = centered_keybinds[j] .. " "
+		end
+		centered_keybinds[j] = centered_keybinds[j] .. self.keybinds[j]
 	end
 
 	vim.bo[self.bufnr].modifiable = true
 	if self.opts.dashboards[self.idx].colors then
-		self.baleia.buf_set_lines(self.bufnr, 0, -1, true, centered)
+		self.baleia.buf_set_lines(self.bufnr, 0, -1, true, centered_dashboard)
 	else
-		vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, true, centered)
+		vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, true, centered_dashboard)
+		for i = 0, self.opts.dashboards[self.idx].height do
+			vim.api.nvim_buf_add_highlight(self.bufnr, 0, "DashboardHeader", i, 0, -1)
+		end
 	end
+
+	vim.api.nvim_buf_set_lines(self.bufnr, -1, -1, true, centered_keybinds)
+
+	for i = 1, self.opts.center_margin do
+		vim.api.nvim_buf_set_lines(
+			self.bufnr,
+			self.opts.dashboards[self.idx].height,
+			self.opts.dashboards[self.idx].height,
+			true,
+			{ "" }
+		)
+	end
+
+	for i = 1, self.opts.top_margin do
+		vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
+	end
+
 	vim.bo[self.bufnr].modifiable = false
 end
 
