@@ -1,21 +1,9 @@
--- utils
-local utils = {}
-function utils.buf_is_empty(bufnr)
-	bufnr = bufnr or 0
-	return vim.api.nvim_buf_line_count(0) == 1 and vim.api.nvim_buf_get_lines(0, 0, -1, false)[1] == ""
-end
+-- tmp
+local vim = {}
+local utils = require("utils")
 
 local M = {}
----@type  config
-local default_opts = {
-	keybinds = {},
-	dashboards = { {
-		width = 20,
-		height = 1,
-		colors = false,
-		ascii = { "no config ? ಠಿ_ಠ" },
-	} },
-}
+local default_opts = {}
 
 --- @param opts config
 --- @return nil
@@ -85,10 +73,10 @@ end
 
 function M:get_valid()
 	local valid_idxs = {}
-	for idx = 1, #self.opts.dashboards do
+	for idx = 1, #self.opts.dashboards + 1 do
 		if
-			self.opts.dashboards[idx].width <= vim.api.nvim_win_get_width(0)
-			and self.opts.dashboards[idx].height <= vim.api.nvim_win_get_height(0)
+			self.opts.dashboards[idx].width <= vim.api.nvim_win_get_width(self.bufnr)
+			and self.opts.dashboards[idx].height <= vim.api.nvim_win_get_height(self.bufnr)
 		then
 			table.insert(valid_idxs, idx)
 		end
@@ -120,29 +108,20 @@ end
 
 function M:render()
 	if
-		self.opts.dashboards[self.idx].width > vim.api.nvim_win_get_width(0)
-		or self.opts.dashboards[self.idx].height > vim.api.nvim_win_get_height(0)
+		self.opts.dashboards[self.idx].width > vim.api.nvim_win_get_width(self.bufnr)
+		or self.opts.dashboards[self.idx].height > vim.api.nvim_win_get_height(self.bufnr)
 	then
 		self:get_valid()
 	end
 
-	---@type string[]
-	local centered = {}
-	local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.idx].width) / 2
-
-	for j = 1, self.opts.dashboards[self.idx].height do
-		centered[j] = ""
-		for i = 1, horizontal_margin do
-			centered[j] = centered[j] .. " "
-		end
-		centered[j] = centered[j] .. self.opts.dashboards[self.idx].ascii[j]
-	end
+	-- to do center things
+	-- <-
 
 	vim.bo[self.bufnr].modifiable = true
 	if self.opts.dashboards[self.idx].colors then
-		self.baleia.buf_set_lines(self.bufnr, 0, -1, true, centered)
+		self.baleia.buf_set_lines(self.bufnr, 0, -1, true, self.opts.dashboards[self.idx].ascii)
 	else
-		vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, true, centered)
+		vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, true, self.opts.dashboards[self.idx].ascii)
 	end
 	vim.bo[self.bufnr].modifiable = false
 end
