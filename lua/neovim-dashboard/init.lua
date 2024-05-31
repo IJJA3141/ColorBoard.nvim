@@ -115,12 +115,23 @@ function M:init()
 	-- keybinds
 	utils.disable_move_key(self.bufnr)
 	for i = 1, #self.opts.keybinds do
-		vim.keymap.set(
-			"n",
-			self.opts.keybinds[i].key,
-			self.opts.keybinds[i].func,
-			{ desc = self.opts.keybinds[i].description, buffer = self.bufnr }
-		)
+		if type(self.opts.keybinds[i].func) == "string" then
+			vim.keymap.set("n", self.opts.keybinds[i].key, function()
+				local dump = loadstring(self.opts.keybinds[i].func)
+				if not dump then
+					vim.cmd(self.opts.keybinds[i].func)
+				else
+					dump()
+				end
+			end, { desc = self.opts.keybinds[i].description, buffer = self.bufnr, nowait = true, silent = true })
+		elseif type(self.opts.keybinds[i].func) == "string" then
+			vim.keymap.set(
+				"n",
+				self.opts.keybinds[i].key,
+				self.opts.keybinds[i].func,
+				{ desc = self.opts.keybinds[i].description, buffer = self.bufnr, nowait = true, silent = true }
+			)
+		end
 
 		local line = ""
 		line = line .. self.opts.keybinds[i].icon .. " " .. self.opts.keybinds[i].description
