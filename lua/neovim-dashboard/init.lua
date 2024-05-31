@@ -1,6 +1,4 @@
-local vim
-
-local utils = require("utils")
+local utils = require("neovim-dashboard.utils")
 
 local M = {
 	---@type string[]
@@ -76,17 +74,9 @@ function M:init()
 		vim.opt_local[opt] = val
 	end
 
-	--[[
-	vim.api.nvim_create_autocmd("WinResized", {
-		callback = function()
-			require("test.init"):render()
-		end,
-	})
-  --]]
-
 	vim.api.nvim_create_autocmd("VimResized", {
 		callback = function()
-			require("test.init"):render()
+			require("neovim-dashboard"):render()
 		end,
 	})
 
