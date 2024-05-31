@@ -240,6 +240,7 @@ function M:render()
 	end
 
 	vim.bo[self.bufnr].modifiable = false
+	vim.bo[self.bufnr].modified = false
 end
 
 function M:close()
