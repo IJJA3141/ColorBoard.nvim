@@ -26,11 +26,9 @@ local default_opts = {
 	keybinds = {
 		{
 			key = "q",
-			func = function()
-				require("neovim-dashboard"):close()
-			end,
+			func = "q",
 			icon = "",
-			description = ":qa!",
+			description = ":q",
 		},
 	},
 	dashboards = { {
