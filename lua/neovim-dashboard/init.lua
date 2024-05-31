@@ -1,16 +1,6 @@
--- utils
-local utils = {}
-function utils.buf_is_empty(bufnr)
-	bufnr = bufnr or 0
-	return vim.api.nvim_buf_line_count(bufnr) == 1 and vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)[1] == ""
-end
+local vim
 
-function utils.disable_move_key(bufnr)
-	local keys = { "w", "f", "b", "h", "j", "k", "l", "<Up>", "<Down>", "<Left>", "<Right>" }
-	vim.tbl_map(function(k)
-		vim.keymap.set("n", k, "<Nop>", { buffer = bufnr })
-	end, keys)
-end
+local utils = require("utils")
 
 local M = {
 	---@type string[]
@@ -32,7 +22,7 @@ local default_opts = {
 		},
 	},
 	dashboards = { {
-		width = 20,
+		width = 15,
 		height = 1,
 		colors = false,
 		ascii = { "no config ? ಠಿ_ಠ" },
@@ -40,12 +30,14 @@ local default_opts = {
 }
 
 --- @param opts config
+--- @param baleia table
 --- @return nil
-function M.setup(opts)
+function M.setup(opts, baleia)
 	opts = opts or {}
-	---@type config
+	baleia = baleia or {}
+
 	M.opts = vim.tbl_deep_extend("force", default_opts, opts)
-	M.baleia = require("baleia").setup()
+	M.baleia = require("baleia").setup(baleia)
 end
 
 function M:init()
@@ -212,12 +204,18 @@ function M:render()
 	end
 
 	vim.bo[self.bufnr].modifiable = true
+
+	for i = 1, self.opts.top_margin do
+		print("new line")
+		vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
+	end
+
 	if self.opts.dashboards[self.idx].colors then
-		self.baleia.buf_set_lines(self.bufnr, 0, -1, true, centered_dashboard)
+		self.baleia.buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
 	else
-		vim.api.nvim_buf_set_lines(self.bufnr, 0, -1, true, centered_dashboard)
+		vim.api.nvim_buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
 		for i = 0, self.opts.dashboards[self.idx].height do
-			vim.api.nvim_buf_add_highlight(self.bufnr, 0, "DashboardHeader", i, 0, -1)
+			vim.api.nvim_buf_add_highlight(self.bufnr, 0, "DashboardHeader", i + self.opts.top_margin, 0, -1)
 		end
 	end
 
@@ -226,17 +224,14 @@ function M:render()
 	for i = 1, self.opts.center_margin do
 		vim.api.nvim_buf_set_lines(
 			self.bufnr,
-			self.opts.dashboards[self.idx].height,
-			self.opts.dashboards[self.idx].height,
+			self.opts.dashboards[self.idx].height + self.opts.top_margin,
+			self.opts.dashboards[self.idx].height + self.opts.top_margin,
 			true,
 			{ "" }
 		)
 	end
 
-	for i = 1, self.opts.top_margin do
-		vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
-	end
-
+	print("")
 	vim.bo[self.bufnr].modifiable = false
 	vim.bo[self.bufnr].modified = false
 end
