@@ -27,7 +27,7 @@ local default_opts = {
 		{
 			key = "d",
 			func = function()
-        require('neovim-dashboard'):close()
+				require("neovim-dashboard"):close()
 			end,
 			icon = "",
 			description = ":q",
@@ -125,7 +125,7 @@ function M:init()
 					dump()
 				end
 			end, { desc = self.opts.keybinds[i].description, buffer = self.bufnr, nowait = true, silent = true })
-		elseif type(self.opts.keybinds[i].func) == "string" then
+		elseif type(self.opts.keybinds[i].func) == "function" then
 			vim.keymap.set(
 				"n",
 				self.opts.keybinds[i].key,
