@@ -25,12 +25,12 @@ local default_opts = {
 	keybind_width = 30,
 	keybinds = {
 		{
-			key = "d",
+			key = "q",
 			func = function()
 				require("neovim-dashboard"):close()
 			end,
 			icon = "",
-			description = ":q",
+			description = ":qa!",
 		},
 	},
 	dashboards = { {
