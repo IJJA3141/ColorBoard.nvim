@@ -20,12 +20,14 @@ local default_opts = {
 			description = ":q",
 		},
 	},
-	dashboards = { {
-		width = 15,
-		height = 1,
-		colors = false,
-		ascii = { "no config ? ಠಿ_ಠ" },
-	} },
+	dashboards = {
+		default = {
+			width = 15,
+			height = 1,
+			colors = false,
+			ascii = { "no config ? ಠಿ_ಠ" },
+		},
+	},
 }
 
 --- @param opts config
@@ -132,11 +134,11 @@ function M:init()
 end
 
 function M:get_valid()
-  print("alo ?")
+	print("alo ?")
 	local valid_keys = {}
 
 	for key, dashboard in ipairs(self.opts.dashboards) do
-    print(key)
+		print(key)
 		if dashboard.width <= vim.api.nvim_win_get_width(0) and dashboard.height <= vim.api.nvim_win_get_height(0) then
 			table.insert(valid_keys, key)
 		end
