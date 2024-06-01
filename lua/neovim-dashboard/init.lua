@@ -105,7 +105,7 @@ function M:init()
 		desc = "[Dashboard] clean dashboard data reduce memory",
 	})
 
-	self:generate_keybinds()
+	self:register_keybinds()
 	self:get_valid()
 	self:render_keybinds()
 end
