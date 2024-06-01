@@ -30,12 +30,6 @@ local default_opts = {
 			colors = false,
 			ascii = { "no config ? ಠಿ_ಠ" },
 		},
-		default2 = {
-			width = 15,
-			height = 1,
-			colors = false,
-			ascii = { "no config ? ಠಿ_ಠ" },
-		},
 	},
 }
 
@@ -262,7 +256,7 @@ function M:render()
 			horizontal_margin = (vim.api.nvim_win_get_width(0) - #self.keyframe[1]) / 2
 
 			for j = 1, #self.keyframe do
-				centered_keybinds[j] = string.rep(" ", horizontal_margin)
+				centered_keybinds[j] = string.rep(" ", horizontal_margin + 1)
 				centered_keybinds[j] = centered_keybinds[j] .. self.keyframe[j]
 			end
 		end
