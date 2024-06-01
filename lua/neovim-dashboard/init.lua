@@ -127,7 +127,6 @@ function M:init()
 		table.insert(self.keybinds, line)
 	end
 
-  print("pre get valid")
 	self:get_valid()
 end
 
@@ -141,7 +140,8 @@ function M:get_valid()
 		end
 	end
 
-	print("alo ?")
+  print(self.opts.dashboards)
+
 	if #valid_keys == 0 then
 		print("not matching dashboard );")
 		return
@@ -199,7 +199,6 @@ function M:render()
 	vim.bo[self.bufnr].modifiable = true
 
 	for i = 1, self.opts.top_margin do
-		print("new line")
 		vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
 	end
 
@@ -224,7 +223,6 @@ function M:render()
 		)
 	end
 
-	print("")
 	vim.bo[self.bufnr].modifiable = false
 	vim.bo[self.bufnr].modified = false
 end
