@@ -132,22 +132,20 @@ function M:init()
 end
 
 function M:get_valid()
-	local valid_idxs = {}
-	for idx = 1, #self.opts.dashboards do
-		if
-			self.opts.dashboards[idx].width <= vim.api.nvim_win_get_width(0)
-			and self.opts.dashboards[idx].height <= vim.api.nvim_win_get_height(0)
-		then
-			table.insert(valid_idxs, idx)
+	local valid_keys = {}
+
+	for key, dashboard in ipairs(self.opts.dashboards) do
+		if dashboard.width <= vim.api.nvim_win_get_width(0) and dashboard.height <= vim.api.nvim_win_get_height(0) then
+			table.insert(valid_keys, key)
 		end
 	end
 
-	if #valid_idxs == 0 then
+	if #valid_keys == 0 then
 		print("not matching dashboard );")
 		return
 	end
 
-	self.idx = valid_idxs[math.random(1, #valid_idxs)]
+	self.key = valid_keys[math.random(1, #valid_keys)]
 end
 
 function M:open()
@@ -168,22 +166,21 @@ end
 
 function M:render()
 	if
-		self.opts.dashboards[self.idx].width > vim.api.nvim_win_get_width(0)
-		or self.opts.dashboards[self.idx].height > vim.api.nvim_win_get_height(0)
+		self.opts.dashboards[self.key].width > vim.api.nvim_win_get_width(0)
+		or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
 	then
 		self:get_valid()
 	end
 
-	---@type string[]
 	local centered_dashboard = {}
-	local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.idx].width) / 2
+	local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
 
-	for j = 1, self.opts.dashboards[self.idx].height do
+	for j = 1, self.opts.dashboards[self.key].height do
 		centered_dashboard[j] = ""
 		for i = 1, horizontal_margin do
 			centered_dashboard[j] = centered_dashboard[j] .. " "
 		end
-		centered_dashboard[j] = centered_dashboard[j] .. self.opts.dashboards[self.idx].ascii[j]
+		centered_dashboard[j] = centered_dashboard[j] .. self.opts.dashboards[self.key].ascii[j]
 	end
 
 	local centered_keybinds = {}
@@ -204,11 +201,11 @@ function M:render()
 		vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
 	end
 
-	if self.opts.dashboards[self.idx].colors then
+	if self.opts.dashboards[self.key].colors then
 		self.baleia.buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
 	else
 		vim.api.nvim_buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
-		for i = 0, self.opts.dashboards[self.idx].height do
+		for i = 0, self.opts.dashboards[self.key].height do
 			vim.api.nvim_buf_add_highlight(self.bufnr, 0, "DashboardHeader", i + self.opts.top_margin, 0, -1)
 		end
 	end
@@ -218,8 +215,8 @@ function M:render()
 	for i = 1, self.opts.center_margin do
 		vim.api.nvim_buf_set_lines(
 			self.bufnr,
-			self.opts.dashboards[self.idx].height + self.opts.top_margin,
-			self.opts.dashboards[self.idx].height + self.opts.top_margin,
+			self.opts.dashboards[self.key].height + self.opts.top_margin,
+			self.opts.dashboards[self.key].height + self.opts.top_margin,
 			true,
 			{ "" }
 		)
