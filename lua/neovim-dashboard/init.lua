@@ -232,11 +232,14 @@ function M:render()
 		end
 
 		local centered_keybinds = {}
-		horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.keybind_width) / 2
 
-		for j = 1, #self.keyframe do
-			centered_keybinds[j] = string.rep(" ", horizontal_margin)
-			centered_keybinds[j] = centered_keybinds[j] .. self.keyframe[j]
+		if #self.keyframe ~= 0 then
+			horizontal_margin = (vim.api.nvim_win_get_width(0) - self.keyframe[1]) / 2
+
+			for j = 1, #self.keyframe do
+				centered_keybinds[j] = string.rep(" ", horizontal_margin)
+				centered_keybinds[j] = centered_keybinds[j] .. self.keyframe[j]
+			end
 		end
 
 		vim.bo[self.bufnr].modifiable = true
