@@ -78,7 +78,7 @@ function M:init()
 	end
 
 	vim.api.nvim_create_autocmd("VimResized", {
-    pattern = {"*.dashboard"},
+		buffer = self.bufnr,
 		callback = function()
 			require("neovim-dashboard"):render()
 		end,
