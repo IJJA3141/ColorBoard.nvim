@@ -1,5 +1,3 @@
-local vim
-
 local utils = require("neovim-dashboard.utils")
 
 local M = {
