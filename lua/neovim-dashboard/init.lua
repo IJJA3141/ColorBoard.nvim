@@ -30,9 +30,6 @@ local default_opts = {
 	},
 }
 
---- @param opts config
---- @param baleia table
---- @return nil
 function M.setup(opts, baleia)
 	opts = opts or {}
 	baleia = baleia or {}
@@ -130,11 +127,11 @@ function M:init()
 		table.insert(self.keybinds, line)
 	end
 
+  print("pre get valid")
 	self:get_valid()
 end
 
 function M:get_valid()
-	print("alo ?")
 	local valid_keys = {}
 
 	for key, dashboard in ipairs(self.opts.dashboards) do
@@ -144,6 +141,7 @@ function M:get_valid()
 		end
 	end
 
+	print("alo ?")
 	if #valid_keys == 0 then
 		print("not matching dashboard );")
 		return
