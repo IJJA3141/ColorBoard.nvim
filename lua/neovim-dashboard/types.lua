@@ -19,5 +19,6 @@
 --- @field dashboards dashboard[]
 
 --- @class line
+--- @field icon string
 --- @field left string
 --- @field right string

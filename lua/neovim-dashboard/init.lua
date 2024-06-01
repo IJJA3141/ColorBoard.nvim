@@ -132,7 +132,8 @@ function M:register_keybinds()
 		end
 
 		local line = {}
-		line.left = self.opts.keybinds[i].icon .. " " .. self.opts.keybinds[i].description
+		line.icon = self.opts.keybinds[i].icon
+		line.left = self.opts.keybinds[i].description
 		line.right = "[" .. self.opts.keybinds[i].key .. "]"
 
 		table.insert(self.keybinds, line)
@@ -146,30 +147,56 @@ function M:render_keybinds()
 		if self.opts.dashboards[self.key].width >= self.opts.keybind_max_width then
 			table.insert(
 				self.keyframe,
-				self.keybinds[1].left
-					.. string.rep(" ", self.opts.keybind_max_width - #self.keybinds[1].left) -- - #self.keybinds[1].right)
+				self.keybinds[1].icon
+					.. " "
+					.. self.keybinds[1].left
+					.. string.rep(
+						" ",
+						self.opts.keybind_max_width - #self.keybinds[1].left - #self.keybinds[1].right - 2
+					)
 					.. self.keybinds[1].right
 			)
 
 			for i = 2, #self.keybinds do
 				table.insert(self.keyframe, "")
-				table.insert(self.keyframe, self.keybinds[i].left .. string.rep(
-					" ",
-					self.opts.keybind_max_width - #self.keybinds[i].left -- - #self.keybinds[i].right
-				) .. self.keybinds[i].right)
+				table.insert(
+					self.keyframe,
+					self.keybinds[i].icon
+						.. " "
+						.. self.keybinds[i].left
+						.. string.rep(
+							" ",
+							self.opts.keybind_max_width - #self.keybinds[i].left - #self.keybinds[i].right - 2
+						)
+						.. self.keybinds[i].right
+				)
 			end
 		else
-			table.insert(self.keyframe, self.keybinds[1].left .. string.rep(
-				" ",
-				self.opts.dashboards[self.key].width - #self.keybinds[1].left -- - #self.keybinds[1].right
-			) .. self.keybinds[1].right)
+			table.insert(
+				self.keyframe,
+				self.keybinds[1].icon
+					.. " "
+					.. self.keybinds[1].left
+					.. string.rep(
+						" ",
+						self.opts.dashboards[self.key].width - #self.keybinds[1].left - #self.keybinds[1].right - 2
+					)
+					.. self.keybinds[1].right
+			)
 
 			for i = 2, #self.keybinds do
 				table.insert(self.keyframe, "")
-				table.insert(self.keyframe, self.keybinds[i].left .. string.rep(
-					" ",
-					self.opts.dashboards[self.key].width - #self.keybinds[i].left -- - #self.keybinds[1].right
-				) .. self.keybinds[i].right)
+				table.insert(
+					self.keyframe,
+					self.keybinds[i].icon
+						.. " "
+						.. self.keybinds[i].left
+						.. string.rep(
+							" ",
+							self.opts.dashboards[self.key].width - #self.keybinds[i].left - #self.keybinds[1].right - 2
+						)
+						.. self.keybinds[i].right
+				)
 			end
 		end
 	end
