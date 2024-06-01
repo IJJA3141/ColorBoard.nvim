@@ -132,6 +132,7 @@ function M:init()
 end
 
 function M:get_valid()
+  print("alo ?")
 	local valid_keys = {}
 
 	for key, dashboard in ipairs(self.opts.dashboards) do
