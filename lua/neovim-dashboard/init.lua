@@ -140,7 +140,8 @@ function M:get_valid()
 		end
 	end
 
-  print(self.opts.dashboards)
+	print(self.opts.top_margin)
+	print(self.opts.dashboards.default.ascii[1])
 
 	if #valid_keys == 0 then
 		print("not matching dashboard );")
