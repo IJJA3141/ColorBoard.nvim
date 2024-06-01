@@ -27,6 +27,12 @@ local default_opts = {
 			colors = false,
 			ascii = { "no config ? ಠಿ_ಠ" },
 		},
+		default2 = {
+			width = 15,
+			height = 1,
+			colors = false,
+			ascii = { "no config ? ಠಿ_ಠ" },
+		},
 	},
 }
 
@@ -138,6 +144,7 @@ function M:get_valid()
 
 	for key, dashboard in ipairs(self.opts.dashboards) do
 		print(key)
+		print(dashboard)
 		if dashboard.width <= vim.api.nvim_win_get_width(0) and dashboard.height <= vim.api.nvim_win_get_height(0) then
 			table.insert(valid_keys, key)
 		end
