@@ -11,10 +11,13 @@
 --- @field func string | function
 
 --- @class config
---- @field top_margin number
---- @field center_margin number
---- @field bottom_margin number
---- @field keybinds keybind[]
---- @field keybind_width number
---- @field keybind_margin number
---- @field dashboards
+--- @field top_margin number | nil
+--- @field center_margin number | nil
+--- @field bottom_min_margin number | nil
+--- @field keybinds keybind[] | nil
+--- @field keybind_max_width number | nil
+--- @field dashboards dashboard[]
+
+--- @class line
+--- @field left string
+--- @field right string

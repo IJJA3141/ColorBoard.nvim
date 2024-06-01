@@ -1,8 +1,13 @@
+local vim
+
 local utils = require("neovim-dashboard.utils")
 
 local M = {
-	---@type string[]
+	--- @type line[]
 	keybinds = {},
+	--- @type string[]
+	keyframe = {},
+	key = nil,
 }
 
 ---@type  config
@@ -102,7 +107,12 @@ function M:init()
 		desc = "[Dashboard] clean dashboard data reduce memory",
 	})
 
-	-- keybinds
+	self:generate_keybinds()
+	self:get_valid()
+	self:render_keybinds()
+end
+
+function M:register_keybinds()
 	utils.disable_move_key(self.bufnr)
 	for i = 1, #self.opts.keybinds do
 		if type(self.opts.keybinds[i].func) == "string" then
@@ -123,24 +133,56 @@ function M:init()
 			)
 		end
 
-		local line = ""
-		line = line .. self.opts.keybinds[i].icon .. " " .. self.opts.keybinds[i].description
-		for j = 1, self.opts.keybind_width - #self.opts.keybinds[i].description do
-			line = line .. " "
-		end
-		line = line .. "[" .. self.opts.keybinds[i].key .. "]"
+		local line = {}
+		line.left = self.opts.keybinds[i].icon .. " " .. self.opts.keybinds[i].description
+		line.right = "[" .. self.opts.keybinds[i].key .. "]"
 
 		table.insert(self.keybinds, line)
 	end
+end
 
-	self:get_valid()
+function M:render_keybinds()
+	self.keyframe = {}
+
+	if #self.keybinds ~= 0 then
+		if self.opts.dashboards[self.key].width >= self.opts.keybind_max_width then
+			table.insert(
+				self.keyframe,
+				self.keybinds[1].left
+					.. string.rep(" ", self.opts.keybind_max_width - #self.keybinds[1].left - #self.keybinds[1].right)
+					.. self.keybinds[1].right
+			)
+
+			for i = 2, #self.keybinds do
+				table.insert(self.keyframe, "")
+				table.insert(
+					self.keyframe,
+					self.keybinds[1].left
+						.. string.rep(
+							" ",
+							self.opts.keybind_max_width - #self.keybinds[1].left - #self.keybinds[1].right
+						)
+						.. self.keybinds[1].right
+				)
+			end
+		else
+			table.insert(
+				self.keyframe,
+				self.keybinds[1].left
+					.. string.rep(
+						" ",
+						self.opts.dashboards[self.key].width - #self.keybinds[1].left - #self.keybinds[1].right
+					)
+					.. self.keybinds[1].right
+			)
+		end
+	end
 end
 
 function M:get_valid()
 	local valid_keys = {}
 
-	print(#self.opts.dashboards)
-	for key = 1, #self.opts.dashboards do
+	for key, dashboard in pairs(self.opts.dashboards) do
 		if dashboard.width <= vim.api.nvim_win_get_width(0) and dashboard.height <= vim.api.nvim_win_get_height(0) then
 			table.insert(valid_keys, key)
 		end
@@ -148,10 +190,10 @@ function M:get_valid()
 
 	if #valid_keys == 0 then
 		print("not matching dashboard );")
-		return
+		self.key = -1
+	else
+		self.key = valid_keys[math.random(1, #valid_keys)]
 	end
-
-	self.key = valid_keys[math.random(1, #valid_keys)]
 end
 
 function M:open()
@@ -176,55 +218,58 @@ function M:render()
 		or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
 	then
 		self:get_valid()
+		self:render_keybinds()
 	end
 
-	local centered_dashboard = {}
-	local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
+	if self.key ~= -1 then
+		local centered_dashboard = {}
+		local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
 
-	for j = 1, self.opts.dashboards[self.key].height do
-		centered_dashboard[j] = ""
-		for i = 1, horizontal_margin do
-			centered_dashboard[j] = centered_dashboard[j] .. " "
+		for j = 1, self.opts.dashboards[self.key].height do
+			centered_dashboard[j] = ""
+			for i = 1, horizontal_margin do
+				centered_dashboard[j] = centered_dashboard[j] .. " "
+			end
+			centered_dashboard[j] = centered_dashboard[j] .. self.opts.dashboards[self.key].ascii[j]
 		end
-		centered_dashboard[j] = centered_dashboard[j] .. self.opts.dashboards[self.key].ascii[j]
-	end
 
-	local centered_keybinds = {}
-	horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.keybind_width) / 2
+		local centered_keybinds = {}
+		horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.keybind_width) / 2
 
-	for j = 1, #self.keybinds do
-		centered_keybinds[j] = ""
-		for i = 1, horizontal_margin do
-			centered_keybinds[j] = centered_keybinds[j] .. " "
+		for j = 1, #self.keybinds do
+			centered_keybinds[j] = ""
+			for i = 1, horizontal_margin do
+				centered_keybinds[j] = centered_keybinds[j] .. " "
+			end
+			centered_keybinds[j] = centered_keybinds[j] .. self.keybinds[j]
 		end
-		centered_keybinds[j] = centered_keybinds[j] .. self.keybinds[j]
-	end
 
-	vim.bo[self.bufnr].modifiable = true
+		vim.bo[self.bufnr].modifiable = true
 
-	for i = 1, self.opts.top_margin do
-		vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
-	end
-
-	if self.opts.dashboards[self.key].colors then
-		self.baleia.buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
-	else
-		vim.api.nvim_buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
-		for i = 0, self.opts.dashboards[self.key].height do
-			vim.api.nvim_buf_add_highlight(self.bufnr, 0, "DashboardHeader", i + self.opts.top_margin, 0, -1)
+		for i = 1, self.opts.top_margin do
+			vim.api.nvim_buf_set_lines(self.bufnr, 0, 0, true, { "" })
 		end
-	end
 
-	vim.api.nvim_buf_set_lines(self.bufnr, -1, -1, true, centered_keybinds)
+		if self.opts.dashboards[self.key].colors then
+			self.baleia.buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
+		else
+			vim.api.nvim_buf_set_lines(self.bufnr, self.opts.top_margin, -1, true, centered_dashboard)
+			for i = 0, self.opts.dashboards[self.key].height do
+				vim.api.nvim_buf_add_highlight(self.bufnr, 0, "DashboardHeader", i + self.opts.top_margin, 0, -1)
+			end
+		end
 
-	for i = 1, self.opts.center_margin do
-		vim.api.nvim_buf_set_lines(
-			self.bufnr,
-			self.opts.dashboards[self.key].height + self.opts.top_margin,
-			self.opts.dashboards[self.key].height + self.opts.top_margin,
-			true,
-			{ "" }
-		)
+		vim.api.nvim_buf_set_lines(self.bufnr, -1, -1, true, centered_keybinds)
+
+		for i = 1, self.opts.center_margin do
+			vim.api.nvim_buf_set_lines(
+				self.bufnr,
+				self.opts.dashboards[self.key].height + self.opts.top_margin,
+				self.opts.dashboards[self.key].height + self.opts.top_margin,
+				true,
+				{ "" }
+			)
+		end
 	end
 
 	vim.bo[self.bufnr].modifiable = false
