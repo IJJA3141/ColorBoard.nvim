@@ -168,7 +168,7 @@ function M:render_keybinds()
 				table.insert(self.keyframe, "")
 				table.insert(self.keyframe, self.keybinds[i].left .. string.rep(
 					" ",
-					self.opts.dashboards[self.key].width - #self.keybinds[1].left -- - #self.keybinds[1].right
+					self.opts.dashboards[self.key].width - #self.keybinds[i].left -- - #self.keybinds[1].right
 				) .. self.keybinds[i].right)
 			end
 		end
