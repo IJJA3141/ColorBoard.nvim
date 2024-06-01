@@ -11,6 +11,7 @@ local default_opts = {
 	center_margin = 2,
 	bottom_margin = 2,
 	keybind_width = 30,
+	keybind_margin = 0,
 	keybinds = {
 		{
 			key = "q",
@@ -39,6 +40,8 @@ function M.setup(opts, baleia)
 end
 
 function M:init()
+	self.opts = self.opts or default_opts
+
 	if not utils.buf_is_empty(0) then
 		self.bufnr = vim.api.nvim_create_buf(false, true)
 	else

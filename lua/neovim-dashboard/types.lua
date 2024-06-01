@@ -16,4 +16,5 @@
 --- @field bottom_margin number
 --- @field keybinds keybind[]
 --- @field keybind_width number
+--- @field keybind_margin number
 --- @field dashboards dashboard[]
