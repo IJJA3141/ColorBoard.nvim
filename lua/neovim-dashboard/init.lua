@@ -139,12 +139,9 @@ end
 function M:get_valid()
 	local valid_keys = {}
 
-	print(self.opts.top_margin)
-	print(self.opts.dashboards.default.ascii[1])
-
-	for key, dashboard in ipairs(self.opts.dashboards) do
+	for key = 1, #self.opts.dashboards do
 		print(key)
-		print(dashboard)
+		print(#self.opts.dashboards[key].ascii[1])
 		if dashboard.width <= vim.api.nvim_win_get_width(0) and dashboard.height <= vim.api.nvim_win_get_height(0) then
 			table.insert(valid_keys, key)
 		end
