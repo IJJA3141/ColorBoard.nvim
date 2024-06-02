@@ -229,6 +229,7 @@ function M:get_valid()
 					+ self.opts.bottom_min_margin
 				<= vim.api.nvim_win_get_height(0)
 		then
+      print(key)
 			table.insert(valid_keys, key)
 		end
 	end
