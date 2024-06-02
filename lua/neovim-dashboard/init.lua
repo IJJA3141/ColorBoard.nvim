@@ -252,7 +252,7 @@ function M:render()
 		self:render_keybinds()
 	end
 
-	if self.key ~= 1 then
+	if self.key ~= -1 then
 		local centered_dashboard = {}
 		local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
 
