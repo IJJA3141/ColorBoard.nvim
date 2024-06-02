@@ -10,14 +10,16 @@
 --- @field description string
 --- @field func string | function
 
---- @class config
---- @field top_margin number | nil
---- @field center_margin number | nil
---- @field bottom_min_margin number | nil
---- @field keybinds keybind[] | nil
---- @field keybind_max_width number | nil
---- @field keybind_padding number | nil
---- @field dashboards dashboard[] | nil
+--- @class strict_config
+--- @field top_margin number
+--- @field center_margin number
+--- @field bottom_min_margin number
+--- @field keybinds keybind[]
+--- @field keybind_max_width number
+--- @field keybind_padding number
+--- @field dashboards dashboard[]
+
+--- @class config: strict_config | nil
 
 --- @class line
 --- @field icon string

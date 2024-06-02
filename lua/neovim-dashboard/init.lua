@@ -1,22 +1,23 @@
 local utils = require("neovim-dashboard.utils")
 
 local M = {
+	--- @type line[]
 	keybinds = {},
 	--- @type string[]
 	keyframe = {},
-	key = nil,
+
 	--- @type config
-	opts = {},
+	opts = nil,
+	key = nil,
 }
 
----@type  config
+---@type strict_config
 local default_opts = {
 	top_margin = 2,
 	center_margin = 2,
-	bottom_margin = 2,
-	keybind_width = 30,
-	keybind_margin = 0,
 	keybind_padding = 2,
+	bottom_min_margin = 2,
+	keybind_max_width = 76,
 	keybinds = {
 		{
 			key = "q",
