@@ -38,13 +38,8 @@ function M.setup(opts, baleia)
 	opts = opts or {}
 	baleia = baleia or {}
 
-	M.opts = vim.tbl_deep_extend("force", default_opts, opts)
+	M.opts = vim.tbl_extend("force", default_opts, opts)
 	M.baleia = require("baleia").setup(baleia)
-
-	-- tests
-	for key, val in pairs(M.opts.dashboards) do
-		print(key)
-	end
 end
 
 function M:init()
