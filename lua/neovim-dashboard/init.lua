@@ -104,9 +104,7 @@ function M:init()
 
 	self:register_keybinds()
 	self:get_valid()
-	if self.key ~= -1 then
-		self:render_keybinds()
-	end
+	self:render_keybinds()
 end
 
 function M:register_keybinds()
@@ -261,16 +259,16 @@ function M:open()
 end
 
 function M:render()
-	if self.key == -1 then
+	if
+		self.key == -1
+		or self.opts.dashboards[self.key].width > vim.api.nvim_win_get_width(0)
+		or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
+	then
 		self:get_valid()
-	else
-		if
-			self.opts.dashboards[self.key].width > vim.api.nvim_win_get_width(0)
-			or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
-		then
-			self:get_valid()
-			self:render_keybinds()
-		end
+	end
+
+	if self.key ~= 1 then
+		self:render_keybinds()
 
 		local centered_dashboard = {}
 		local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
