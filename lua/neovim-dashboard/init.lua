@@ -104,7 +104,9 @@ function M:init()
 
 	self:register_keybinds()
 	self:get_valid()
-	self:render_keybinds()
+	if self.key ~= -1 then
+		self:render_keybinds()
+	end
 end
 
 function M:register_keybinds()
