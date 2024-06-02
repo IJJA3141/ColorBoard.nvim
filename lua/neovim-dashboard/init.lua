@@ -104,9 +104,7 @@ function M:init()
 
 	self:register_keybinds()
 	self:get_valid()
-	if self.key ~= -1 then
-		self:render_keybinds()
-	end
+	self:render_keybinds()
 end
 
 function M:register_keybinds()
@@ -142,7 +140,7 @@ end
 function M:render_keybinds()
 	self.keyframe = {}
 
-	if #self.keybinds ~= 0 then
+	if #self.keybinds ~= 0 and self.key ~= -1 then
 		if self.opts.dashboards[self.key].width >= self.opts.keybind_max_width then
 			table.insert(
 				self.keyframe,
@@ -244,22 +242,6 @@ function M:get_valid()
 	end
 end
 
-function M:open()
-	local mode = vim.api.nvim_get_mode()
-	if mode == "i" or not vim.bo.modifiable then
-		return
-	end
-
-	if not vim.o.hidden and vim.bo.modified then
-		--save before open
-		vim.cmd.write()
-		return
-	end
-
-	self:init()
-	self:render()
-end
-
 function M:render()
 	if
 		self.key == -1
@@ -267,11 +249,10 @@ function M:render()
 		or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
 	then
 		self:get_valid()
+		self:render_keybinds()
 	end
 
 	if self.key ~= 1 then
-		self:render_keybinds()
-
 		local centered_dashboard = {}
 		local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
 
@@ -324,6 +305,22 @@ function M:render()
 
 	vim.bo[self.bufnr].modifiable = false
 	vim.bo[self.bufnr].modified = false
+end
+
+function M:open()
+	local mode = vim.api.nvim_get_mode()
+	if mode == "i" or not vim.bo.modifiable then
+		return
+	end
+
+	if not vim.o.hidden and vim.bo.modified then
+		--save before open
+		vim.cmd.write()
+		return
+	end
+
+	self:init()
+	self:render()
 end
 
 function M:close()
