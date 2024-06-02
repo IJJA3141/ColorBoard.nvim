@@ -1,11 +1,12 @@
 local utils = require("neovim-dashboard.utils")
 
 local M = {
-	--- @type line[]
 	keybinds = {},
 	--- @type string[]
 	keyframe = {},
 	key = nil,
+	--- @type config
+	opts = {},
 }
 
 ---@type  config
@@ -217,7 +218,16 @@ function M:get_valid()
 	local valid_keys = {}
 
 	for key, dashboard in pairs(self.opts.dashboards) do
-		if dashboard.width <= vim.api.nvim_win_get_width(0) and dashboard.height <= vim.api.nvim_win_get_height(0) then
+		if
+			dashboard.width <= vim.api.nvim_win_get_width(0)
+			and dashboard.height
+					+ #self.opts.keybinds * 2
+					- 1
+					+ self.opts.top_margin
+					+ self.opts.center_margin
+					+ self.opts.bottom_min_margin
+				<= vim.api.nvim_win_get_height(0)
+		then
 			table.insert(valid_keys, key)
 		end
 	end

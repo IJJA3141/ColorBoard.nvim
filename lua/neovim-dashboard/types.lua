@@ -17,7 +17,7 @@
 --- @field keybinds keybind[] | nil
 --- @field keybind_max_width number | nil
 --- @field keybind_padding number | nil
---- @field dashboards dashboard[]
+--- @field dashboards dashboard[] | nil
 
 --- @class line
 --- @field icon string
