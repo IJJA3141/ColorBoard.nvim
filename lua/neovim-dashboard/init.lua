@@ -229,7 +229,7 @@ function M:get_valid()
 					+ self.opts.bottom_min_margin
 				<= vim.api.nvim_win_get_height(0)
 		then
-      print(key)
+			print(key)
 			table.insert(valid_keys, key)
 		end
 	end
@@ -259,15 +259,17 @@ function M:open()
 end
 
 function M:render()
-	if
-		self.opts.dashboards[self.key].width > vim.api.nvim_win_get_width(0)
-		or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
-	then
+	if self.key == -1 then
 		self:get_valid()
-		self:render_keybinds()
-	end
+	else
+		if
+			self.opts.dashboards[self.key].width > vim.api.nvim_win_get_width(0)
+			or self.opts.dashboards[self.key].height > vim.api.nvim_win_get_height(0)
+		then
+			self:get_valid()
+			self:render_keybinds()
+		end
 
-	if self.key ~= -1 then
 		local centered_dashboard = {}
 		local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
 
