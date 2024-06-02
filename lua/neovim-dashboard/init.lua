@@ -15,6 +15,7 @@ local default_opts = {
 	bottom_margin = 2,
 	keybind_width = 30,
 	keybind_margin = 0,
+	keybind_padding = 2,
 	keybinds = {
 		{
 			key = "q",
@@ -39,6 +40,11 @@ function M.setup(opts, baleia)
 
 	M.opts = vim.tbl_deep_extend("force", default_opts, opts)
 	M.baleia = require("baleia").setup(baleia)
+
+	-- tests
+	for key, val in pairs(M.opts.dashboards) do
+		print(key)
+	end
 end
 
 function M:init()
@@ -146,7 +152,11 @@ function M:render_keybinds()
 					.. self.keybinds[1].left
 					.. string.rep(
 						" ",
-						self.opts.keybind_max_width - #self.keybinds[1].left - #self.keybinds[1].right - 2
+						self.opts.keybind_max_width
+							- #self.keybinds[1].left
+							- #self.keybinds[1].right
+							- 2
+							- self.opts.keybind_padding * 2
 					)
 					.. self.keybinds[1].right
 			)
@@ -160,7 +170,11 @@ function M:render_keybinds()
 						.. self.keybinds[i].left
 						.. string.rep(
 							" ",
-							self.opts.keybind_max_width - #self.keybinds[i].left - #self.keybinds[i].right - 2
+							self.opts.keybind_max_width
+								- #self.keybinds[i].left
+								- #self.keybinds[i].right
+								- 2
+								- self.opts.keybind_padding * 2
 						)
 						.. self.keybinds[i].right
 				)
@@ -173,7 +187,11 @@ function M:render_keybinds()
 					.. self.keybinds[1].left
 					.. string.rep(
 						" ",
-						self.opts.dashboards[self.key].width - #self.keybinds[1].left - #self.keybinds[1].right - 2
+						self.opts.dashboards[self.key].width
+							- #self.keybinds[1].left
+							- #self.keybinds[1].right
+							- 2
+							- self.opts.keybind_padding * 2
 					)
 					.. self.keybinds[1].right
 			)
@@ -187,7 +205,11 @@ function M:render_keybinds()
 						.. self.keybinds[i].left
 						.. string.rep(
 							" ",
-							self.opts.dashboards[self.key].width - #self.keybinds[i].left - #self.keybinds[1].right - 2
+							self.opts.dashboards[self.key].width
+								- #self.keybinds[i].left
+								- #self.keybinds[1].right
+								- 2
+								- self.opts.keybind_padding * 2
 						)
 						.. self.keybinds[i].right
 				)
