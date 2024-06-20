@@ -27,7 +27,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind)
 
 	local move_up = function()
 		index = index - 2
-    print(index)
+		print(index)
 
 		if index < 1 then
 			index = #keybind * 2 - 1
@@ -37,9 +37,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind)
 	end
 
 	local run = function()
-		print(index / 2)
-
-		vim.api.nvim_feedkeys(keybind[1].key, "n", false)
+		vim.api.nvim_feedkeys(keybind[index / 2 + 0.5].key, "n", false)
 	end
 
 	vim.keymap.set("n", "j", move_down, { buffer = bufnr })
