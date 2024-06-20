@@ -258,6 +258,7 @@ function M:render()
 	if self.key ~= -1 then
 		local centered_dashboard = {}
 		local horizontal_margin = (vim.api.nvim_win_get_width(0) - self.opts.dashboards[self.key].width) / 2
+		local move_cursor
 
 		for j = 1, self.opts.dashboards[self.key].height do
 			centered_dashboard[j] = ""
@@ -277,7 +278,7 @@ function M:render()
 				centered_keybinds[j] = centered_keybinds[j] .. self.keyframe[j]
 			end
 
-			utils.set_move_key(
+			move_cursor = utils.set_move_key(
 				self.bufnr,
 				self.winid,
 				horizontal_margin,
@@ -312,6 +313,8 @@ function M:render()
 				{ "" }
 			)
 		end
+
+		move_cursor()
 	end
 
 	vim.bo[self.bufnr].modifiable = false

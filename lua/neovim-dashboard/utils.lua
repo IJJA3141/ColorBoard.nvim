@@ -15,7 +15,7 @@ end
 
 function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
 	local index = -1
-	local fn = function()
+	local move_down = function()
 		index = index + 2
 
 		if index >= keybind_number and index ~= -1 then
@@ -25,9 +25,20 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
 		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 1 })
 	end
 
-	vim.keymap.set("n", "j", fn, { buffer = bufnr })
+	local move_up = function()
+		index = index - 2
 
-	fn()
+		if index < 0 and index ~= -1 then
+			index = keybind_number
+		end
+
+		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 1 })
+	end
+
+	vim.keymap.set("n", "j", move_down, { buffer = bufnr })
+	vim.keymap.set("n", "k", move_up, { buffer = bufnr })
+
+	return move_down
 end
 
 return utils
