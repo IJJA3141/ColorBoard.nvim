@@ -313,7 +313,7 @@ function M:render()
 			)
 		end
 
-		vim.api.nvim_feedkeys("j", "n", false)
+		vim.api.nvim_input("j")
 	end
 
 	vim.bo[self.bufnr].modifiable = false
