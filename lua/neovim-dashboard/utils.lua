@@ -13,12 +13,12 @@ function utils.disable_move_key(bufnr)
 	end, keys)
 end
 
-function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
+function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind)
 	local index = -1
 	local move_down = function()
 		index = index + 2
 
-		if index >= keybind_number * 2 and index ~= -1 then
+		if index >= #keybind * 2 and index ~= -1 then
 			index = 1
 		end
 
@@ -28,15 +28,20 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
 	local move_up = function()
 		index = index - 2
 
-		if index < 1 and index ~= -1 then
-			index = keybind_number * 2
+		if index < 0 and index ~= -1 then
+			index = #keybind * 2 - 1
 		end
 
 		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 1 })
 	end
 
+	local run = function()
+		vim.api.nvim_feedkeys(keybind[index / 2].key, "n", false)
+	end
+
 	vim.keymap.set("n", "j", move_down, { buffer = bufnr })
 	vim.keymap.set("n", "k", move_up, { buffer = bufnr })
+	vim.keymap.set("n", "<Enter>", run, { buffer = bufnr })
 end
 
 return utils
