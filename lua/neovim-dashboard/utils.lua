@@ -19,7 +19,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
 		index = index + 2
 
 		if index >= keybind_number then
-			index = 0
+			index = 1
 		end
 
 		print(tostring(offset_left) .. " | " .. tostring(offset_top + index))
