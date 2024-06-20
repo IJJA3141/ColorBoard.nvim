@@ -23,7 +23,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
 		end
 
 		print(tostring(offset_left) .. " | " .. tostring(offset_top + index))
-		--vim.api.nvim_win_set_cursor(win, { offset_left, offset_top + index })
+		vim.api.nvim_win_set_cursor(win, { math.ceil(offset_left) + 1, offset_top + index })
 	end
 
 	vim.keymap.set("n", "j", fn, { buffer = bufnr })
