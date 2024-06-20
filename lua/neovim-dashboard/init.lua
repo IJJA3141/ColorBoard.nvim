@@ -1,3 +1,4 @@
+-- luacheck: push ignore vim
 local utils = require("neovim-dashboard.utils")
 
 local M = {
@@ -9,6 +10,8 @@ local M = {
 	--- @type config
 	opts = nil,
 	key = nil,
+
+	index = 0,
 }
 
 ---@type strict_config
@@ -273,6 +276,14 @@ function M:render()
 				centered_keybinds[j] = string.rep(" ", horizontal_margin + 1)
 				centered_keybinds[j] = centered_keybinds[j] .. self.keyframe[j]
 			end
+
+			utils.set_move_key(
+				self.bufnr,
+				self.winid,
+				horizontal_margin,
+				self.opts.top_margin + #centered_dashboard + self.opts.center_margin,
+				#self.opts.keybinds
+			)
 		end
 
 		vim.bo[self.bufnr].modifiable = true
@@ -334,3 +345,5 @@ function M:close()
 end
 
 return M
+
+-- luacheck: pop

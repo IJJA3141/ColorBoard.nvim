@@ -1,3 +1,4 @@
+-- luacheck: push ignore vim
 local utils = {}
 
 function utils.buf_is_empty(bufnr)
@@ -12,4 +13,19 @@ function utils.disable_move_key(bufnr)
 	end, keys)
 end
 
+function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
+	local index = 0
+
+	vim.keymap.set("n", "j", function()
+		index = index + 2
+
+		if index >= keybind_number then
+			index = 0
+		end
+
+		vim.api.nvim_win_set_cursor(win, { offset_left, offset_top + index })
+	end, { buffer = bufnr })
+end
+
 return utils
+-- luacheck: pop
