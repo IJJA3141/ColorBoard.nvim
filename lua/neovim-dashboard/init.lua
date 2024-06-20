@@ -282,7 +282,7 @@ function M:render()
 				self.winid,
 				horizontal_margin,
 				self.opts.top_margin + #centered_dashboard + self.opts.center_margin,
-				#self.opts.keybinds
+				self.opts.keybinds
 			)
 		end
 
