@@ -22,7 +22,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
 			index = 0
 		end
 
-		print(tostring(offset_left) + " | " + tostring(offset_top + index))
+		print(tostring(offset_left) .. " | " .. tostring(offset_top + index))
 		--vim.api.nvim_win_set_cursor(win, { offset_left, offset_top + index })
 	end
 
