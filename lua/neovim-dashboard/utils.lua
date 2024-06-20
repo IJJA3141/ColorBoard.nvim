@@ -14,19 +14,20 @@ function utils.disable_move_key(bufnr)
 end
 
 function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
-	local index = 1
+	local index = -1
 	local fn = function()
 		index = index + 2
 
-		if index >= keybind_number then
+		if index >= keybind_number and index ~= -1 then
 			index = 1
 		end
 
-		print(tostring(offset_left) .. " | " .. tostring(offset_top + index))
-		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) + 1 })
+		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 1 })
 	end
 
 	vim.keymap.set("n", "j", fn, { buffer = bufnr })
+
+	fn()
 end
 
 return utils
