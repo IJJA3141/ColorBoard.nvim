@@ -22,7 +22,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind)
 			index = 1
 		end
 
-		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 1 })
+		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 2 })
 	end
 
 	local move_up = function()
@@ -32,7 +32,7 @@ function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind)
 			index = #keybind * 2 - 1
 		end
 
-		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 1 })
+		vim.api.nvim_win_set_cursor(win, { offset_top + index, math.ceil(offset_left) - 2 })
 	end
 
 	local run = function()
