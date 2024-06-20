@@ -14,7 +14,7 @@ function utils.disable_move_key(bufnr)
 end
 
 function utils.set_move_key(bufnr, win, offset_left, offset_top, keybind_number)
-	local index = 0
+	local index = 1
 	local fn = function()
 		index = index + 2
 
