@@ -1,6 +1,6 @@
-# placeholder.name
+# Colorboard.nvim
 
-This plugin provides a customizable and visually appealing dashboard for your Neovim editor, bringing a splash of color to your coding environment. With the ability to parse ANSI colors directly using [baleia](https://github.com/m00qek/baleia.nvim). It is heavily based on [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim).
+This plugin provides a customizable and visually appealing dashboard for Neovim, bringing a splash of color to your coding environment. With the ability to parse ANSI colors directly using [baleia](https://github.com/m00qek/baleia.nvim). It is heavily based on [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim).
 
 ---
 
@@ -8,10 +8,14 @@ This plugin provides a customizable and visually appealing dashboard for your Ne
 
 ---
 
-- [features](#Features)
-- [dependencies](#Dependencies)
-- [installation](#Installation)
-- [to do](#To_do)
+- [🚀 Features](#Features)
+- [🏛️ Dependencies](#Dependencies)
+- [📦 Installation](#Installation)
+- [⚙️ Setup](#Setup)
+  - [🏷️ Types]($Types)
+  - [📝 Default config]($Types)
+  - [ ✍️ Exemple config]($Types)
+- [To do](#To_do)
 
 ## 🚀 Features
 
@@ -33,14 +37,15 @@ This plugin provides a customizable and visually appealing dashboard for your Ne
 	    "m00qek/baleia.nvim",
     },
     event = "VimEnter",
-    lazy = true,
-    init = function()
-    	vim.opt.laststatus = 0
-    end,
+
+    -- if you whant to hide the default status line add the following line
+    init = function() vim.opt.laststatus = 0 end,
 }
 ```
 
 ## ⚙️ Setup
+
+### 🏷️ Types
 
 You can use those types with Luacheck
 
@@ -75,6 +80,8 @@ You can use those types with Luacheck
 
 ```
 
+### 📝 Default config
+
 To configure the plugin call setup on it and pass a configuration object. This object is composed of an array of dash board and an array of keybinds. You can take the default configuration as an exemple.
 
 ```lua
@@ -104,10 +111,10 @@ local default_opts = {
 
 ```
 
+### ✍️ Exemple config
+
+go see my config [here](https://github.com/IJJA3141/.config)
+
 ## To do
 
 select dashboard by it's name
-
----
-
-of course this was writen with ChatGpt...

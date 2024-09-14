@@ -232,13 +232,12 @@ function M:get_valid()
 					+ self.opts.bottom_min_margin
 				<= vim.api.nvim_win_get_height(0)
 		then
-			print(key)
 			table.insert(valid_keys, key)
 		end
 	end
 
 	if #valid_keys == 0 then
-		print("not matching dashboard );")
+		print("not matching dashboard /!\\")
 		self.key = -1
 	else
 		self.key = valid_keys[math.random(1, #valid_keys)]
