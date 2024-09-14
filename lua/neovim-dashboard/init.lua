@@ -31,10 +31,10 @@ local default_opts = {
 	},
 	dashboards = {
 		default = {
-			width = 15,
+			width = 8,
 			height = 1,
-			colors = false,
-			ascii = { "no config ? ಠಿ_ಠ" },
+			colors = true,
+			ascii = { "\x1B[36m[NEOVIM]\x1B[0m" },
 		},
 	},
 }
