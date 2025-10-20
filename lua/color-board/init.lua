@@ -108,11 +108,10 @@ function M.instantiate()
   ctx.current = ctx.valid[math.random(#ctx.valid)]
   render()
 
-  vim.bo.modifiable = false
-  vim.bo.modified = false
-
-  vim.wo.number = false
-  vim.wo.fillchars = "eob: "
+  vim.opt_local.modifiable = false
+  vim.opt_local.modified = false
+  vim.opt_local.number = false
+  vim.opt_local.fillchars = "eob: "
 
   vim.api.nvim_create_autocmd("VimResized", { buffer = ctx.buf, callback = resize })
 
