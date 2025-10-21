@@ -14,8 +14,8 @@ local M = {}
 ---@field keys_row integer      The top-left row position of the keymap render
 ---@field keys_column integer   The top-left column position of the keymap render
 ---
----@filed opts color-board.config The config
----
+---@field opts color-board.config The config
+
 local ctx = {
   buf = 0,
   baleia = require("baleia").setup(),
@@ -30,45 +30,59 @@ local ctx = {
   keys_column = 0,
 }
 
-local function render()
-  local db = ctx.opts.dashboards[ctx.current]
+---@type color-board.dashboard
+local fallback_dashboard = {
+  width = 29,
+  height = 1,
+  colored = false,
+  ascii = { "This is a fallback_dashboard." }
+}
+
+local function render(dashboard, render_keys)
+  vim.opt_local.modifiable = true
+
   local tb = {}
 
-  local top_margin = math.floor((vim.o.lines - db.height - #ctx.keys_render) / ctx.opts.proportion)
-  local left_margin = string.rep(" ", math.floor((vim.o.columns - db.width) / 2))
+  local top_margin = math.floor((vim.o.lines - dashboard.height - #ctx.keys_render) / ctx.opts.proportion)
+  local left_margin = string.rep(" ", math.floor((vim.o.columns - dashboard.width) / 2))
 
   for i = 1, top_margin do tb[i] = "" end
 
-  if db.ascii then
-    for i = 1, #db.ascii do
-      tb[#tb + 1] = left_margin .. db.ascii[i]
+  if dashboard.ascii then
+    for i = 1, #dashboard.ascii do
+      tb[#tb + 1] = left_margin .. dashboard.ascii[i]
     end
   else
-    for _, line in ipairs(vim.fn.readfile(db.path)) do
+    for _, line in ipairs(vim.fn.readfile(dashboard.path)) do
       tb[#tb + 1] = left_margin .. line
     end
   end
 
-  left_margin = string.rep(" ", math.floor((vim.o.columns - ctx.opts.keymap_width) / 2))
+  if render_keys then
+    left_margin = string.rep(" ", math.floor((vim.o.columns - ctx.opts.keymap_width) / 2))
 
-  ctx.keys_row = #tb + ctx.opts.space + 1
-  ctx.keys_column = #left_margin
+    ctx.keys_row = #tb + ctx.opts.space + 1
+    ctx.keys_column = #left_margin
 
-  for _, line in ipairs(ctx.keys_render) do
-    tb[#tb + 1] = left_margin .. line
+    for _, line in ipairs(ctx.keys_render) do
+      tb[#tb + 1] = left_margin .. line
+    end
   end
 
-  if db.colored then
+  if dashboard.colored then
     ctx.baleia.buf_set_lines(ctx.buf, 0, -1, true, tb)
   else
     vim.api.nvim_buf_set_lines(ctx.buf, 0, -1, true, tb)
     vim.api.nvim_buf_set_extmark(ctx.buf, ctx.namespace, top_margin, 0, {
-      end_row = top_margin + db.height,
+      end_row = top_margin + dashboard.height,
       hl_group = "DashboardHeader",
     })
   end
 
-  vim.api.nvim_win_set_cursor(0, { ctx.keys_row + ctx.pos, ctx.keys_column })
+  if render_keys then vim.api.nvim_win_set_cursor(0, { ctx.keys_row + ctx.pos, ctx.keys_column }) end
+
+  vim.opt_local.modifiable = false
+  vim.opt_local.modified = false
 end
 
 local function resize()
@@ -81,12 +95,19 @@ local function resize()
       end
     end
 
-    if #valid == 0 then return end
-    ctx.valid = valid
-    ctx.current = ctx.valid[math.random(#ctx.valid)]
+    if #valid == 0 then
+      render(fallback_dashboard, false)
+    else
+      ctx.valid = valid
+      ctx.current = ctx.valid[math.random(#ctx.valid)]
+      render(ctx.opts.dashboards[ctx.current], true)
+    end
   end
 
-  render()
+
+  local view = vim.fn.winsaveview()
+  view.topline = 1
+  vim.fn.winrestview(view)
 end
 
 function M.instantiate()
@@ -103,13 +124,13 @@ function M.instantiate()
     end
   end
 
-  if #ctx.valid == 0 then return end
+  if #ctx.valid == 0 then
+    render(fallback_dashboard, false)
+  else
+    ctx.current = ctx.valid[math.random(#ctx.valid)]
+    render(ctx.opts.dashboards[ctx.current], true)
+  end
 
-  ctx.current = ctx.valid[math.random(#ctx.valid)]
-  render()
-
-  vim.opt_local.modifiable = false
-  vim.opt_local.modified = false
   vim.opt_local.number = false
   vim.opt_local.fillchars = "eob: "
 
